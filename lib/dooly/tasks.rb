@@ -1,7 +1,7 @@
 namespace :db do
   namespace :migrate do
     desc 'insert version to migration table directly'
-    task :force, :version do |t, args|
+    task :force, [:version] => :environment do |t, args|
       ActiveRecord::Base.connection.initialize_schema_migrations_table
       version = Integer(ENV['VERSION'] || args[:version])
       migrations = ActiveRecord::Migrator.migrations(ActiveRecord::Migrator.migrations_paths)
@@ -21,7 +21,7 @@ namespace :db do
 
     namespace :force do
       desc 'delete specified version from migration table directly'
-      task :down, :version do |t, args|
+      task :down, [:version] => :environment do |t, args|
         ActiveRecord::Base.connection.initialize_schema_migrations_table
         version = Integer(ENV['VERSION'] || args[:version])
         table = Arel::Table.new(ActiveRecord::Migrator.schema_migrations_table_name)
@@ -33,4 +33,3 @@ namespace :db do
     end
   end
 end
-
